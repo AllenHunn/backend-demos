@@ -1,11 +1,15 @@
-import { Controller, Get, Param, Post, Body, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Put, Delete, UseInterceptors, UseGuards } from '@nestjs/common';
 import { CatService } from './cat.service';
 import { Cat } from './cat.entity';
+import { Cache } from '../cache';
 import { CreateCatDTO } from './dto/createCat.dto';
 import { UpdateCatDTO } from './dto/updateCat.dto';
 import { UpdateResult, DeleteResult } from 'typeorm';
+import { CacheInterceptor } from 'src/interceptors/cache.interceptor';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('cat')
+// @UseGuards(new AuthGuard())
 export class CatController {
     constructor(private readonly catService: CatService) { }
 
@@ -15,8 +19,11 @@ export class CatController {
     }
 
     @Get(':id')
+    @UseInterceptors(new CacheInterceptor(Cat.name))
     async find(@Param('id') id: string): Promise<Cat> {
-        return await this.catService.find(id);
+        const cat = await this.catService.find(id);
+        Cache.addToCache(Cat.name, id, cat);
+        return cat;
     }
 
     @Post()
