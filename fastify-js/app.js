@@ -14,15 +14,15 @@ module.exports = function (fastify, opts, next) {
   fastify.register(AutoLoad, {
     dir: path.join(__dirname, 'plugins'),
     options: Object.assign({}, opts)
-  })
+  });
 
   // This loads all plugins defined in services
   // define your routes in one of these
   fastify.register(AutoLoad, {
     dir: path.join(__dirname, 'services'),
     options: Object.assign({}, opts)
-  })
+  });
 
   // Make sure to call next when done
-  next()
+  next();
 }

@@ -2,10 +2,10 @@
 
 module.exports = function (fastify, opts, next) {
   fastify.get('/example', function (request, reply) {
-    reply.send('this is an example')
-  })
+    reply.send('this is an example' + fastify.someSupport())
+  });
 
-  next()
+  next();
 }
 
 // If you prefer async/await, use the following
